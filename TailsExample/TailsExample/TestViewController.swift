@@ -45,7 +45,7 @@ class TestViewController: UIViewController {
             
             view3~.top == view1~,
             view3~.left == view1~.right + padding,
-            view3~.right == self.view~ + insets,
+            view3~.right == insets,
             view3~.width == 75,
             view3~.height == view1~ * 2
         )

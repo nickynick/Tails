@@ -28,30 +28,42 @@ struct LayoutEquation {
         for lhsAttribute in self.lhs.layoutAttributes! {
             if let rhsAttributes = self.rhs.viewAttributes?.layoutAttributes {
                 for rhsAttribute in rhsAttributes {
-                    constraints.append(self.createConstraintWithAttributes(lhsAttribute, rhs: rhsAttribute))
+                    constraints.append(self.createConstraintWithAttributes(lhsAttribute, rhsAttribute: rhsAttribute))
                 }
             } else {
-                constraints.append(self.createConstraintWithAttributes(lhsAttribute, rhs: lhsAttribute))
+                constraints.append(self.createConstraintWithAttributes(lhsAttribute, rhsAttribute: lhsAttribute))
             }
         }
-        
-        let superview = self.findCommonSuperview(self.lhs.view, viewOrNil: self.rhs.viewAttributes?.view)
-        assert(superview != nil, "Views must have a common superview!")
-        
-        superview.addConstraints(constraints)
         
         return constraints
     }
     
-    func createConstraintWithAttributes(lhs: NSLayoutAttribute, rhs: NSLayoutAttribute) -> NSLayoutConstraint {
-        return NSLayoutConstraint(
+    func createConstraintWithAttributes(lhsAttribute: NSLayoutAttribute, rhsAttribute: NSLayoutAttribute) -> NSLayoutConstraint {
+        var rhsView = self.rhs.viewAttributes?.view
+        
+        if (rhsView == nil && self.attributeItemRequired(rhsAttribute)) {
+            rhsView = self.lhs.view.superview
+        }
+        
+        let constraint = NSLayoutConstraint(
             item: self.lhs.view,
-            attribute: lhs,
+            attribute: lhsAttribute,
             relatedBy: self.relation,
-            toItem: self.rhs.viewAttributes?.view,
-            attribute: rhs,
+            toItem: rhsView,
+            attribute: rhsAttribute,
             multiplier: self.rhs.multiplier,
-            constant: self.rhs.constant(rhs))
+            constant: self.rhs.constant(rhsAttribute))
+        
+        let superview = self.findCommonSuperview(self.lhs.view, viewOrNil: rhsView)
+        assert(superview != nil, "Views must have a common superview!")
+        
+        superview.addConstraint(constraint)
+
+        return constraint
+    }
+    
+    func attributeItemRequired(attribute: NSLayoutAttribute) -> Bool {
+        return !contains([.Width, .Height], attribute)
     }
     
     func findCommonSuperview(view: UIView, viewOrNil: UIView?) -> UIView! {
@@ -77,7 +89,7 @@ func == (lhs: ViewAttributes, rhs: ViewAttributes) -> LayoutEquation {
 }
 
 func == <T: LayoutConstant> (lhs: ViewAttributes, rhs: T) -> LayoutEquation {
-    return lhs == ConstantLayoutExpression<T>(viewAttributes: nil, multiplier: 0, constant: rhs)
+    return lhs == ConstantLayoutExpression<T>(viewAttributes: nil, multiplier: 1, constant: rhs)
 }
 
 
@@ -90,7 +102,7 @@ func >= (lhs: ViewAttributes, rhs: ViewAttributes) -> LayoutEquation {
 }
 
 func >= <T: LayoutConstant> (lhs: ViewAttributes, rhs: T) -> LayoutEquation {
-    return lhs >= ConstantLayoutExpression<T>(viewAttributes: nil, multiplier: 0, constant: rhs)
+    return lhs >= ConstantLayoutExpression<T>(viewAttributes: nil, multiplier: 1, constant: rhs)
 }
 
 
@@ -103,5 +115,5 @@ func <= (lhs: ViewAttributes, rhs: ViewAttributes) -> LayoutEquation {
 }
 
 func <= <T: LayoutConstant> (lhs: ViewAttributes, rhs: T) -> LayoutEquation {
-    return lhs <= ConstantLayoutExpression<T>(viewAttributes: nil, multiplier: 0, constant: rhs)
+    return lhs <= ConstantLayoutExpression<T>(viewAttributes: nil, multiplier: 1, constant: rhs)
 }
