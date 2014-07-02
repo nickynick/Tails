@@ -9,15 +9,21 @@
 import Foundation
 import UIKit
 
-struct LayoutEquation {
+class LayoutEquation {
     let lhs: ViewAttributes
     let rhs: LayoutEquationRightSide
     let relation: NSLayoutRelation
+    let priority: Int
     
-    init(lhs: ViewAttributes, rhs: LayoutEquationRightSide, relation: NSLayoutRelation) {
+    init(lhs: ViewAttributes, rhs: LayoutEquationRightSide, relation: NSLayoutRelation = NSLayoutRelation.Equal, priority: Int = UILayoutPriorityRequired) {
         self.lhs = lhs
         self.rhs = rhs
         self.relation = relation
+        self.priority = priority
+    }
+    
+    func withPriority(priority: Int) -> LayoutEquation {
+        return LayoutEquation(lhs: self.lhs, rhs: self.rhs, relation: self.relation, priority: priority)
     }
     
     func install() -> NSLayoutConstraint[] {
@@ -55,6 +61,8 @@ struct LayoutEquation {
             attribute: rhsViewAttribute,
             multiplier: self.rhs.getMultiplier(rhsAttribute),
             constant: self.rhs.getConstant(rhsAttribute))
+        
+        constraint.priority = UILayoutPriority(self.priority)
         
         let superview = self.findCommonSuperview(self.lhs.view, viewOrNil: rhsView)
         assert(superview != nil, "Views must have a common superview!")
@@ -106,4 +114,11 @@ func <= (lhs: ViewAttributes, rhs: LayoutEquationRightSide) -> LayoutEquation {
 
 func <= <T: LayoutConstant> (lhs: ViewAttributes, rhs: T) -> LayoutEquation {
     return lhs <= LayoutExpression(viewAttributes: nil, multiplier: 1, constant: rhs)
+}
+
+
+operator infix ~~ {}
+
+func ~~ (lhs: LayoutEquation, rhs: Int) -> LayoutEquation {
+    return lhs.withPriority(rhs)
 }

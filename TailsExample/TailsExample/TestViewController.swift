@@ -43,20 +43,22 @@ class TestViewController: UIViewController {
         Tails.install(
             view1~.top == self.topLayoutGuide~.bottom + padding,
             view1~.left == self.view~ + insets,
-            view1~.height == 100,
+            view1~.height == 200,
             
-            view2~.top == view1~.bottom + 4.0 + 2*3,
+            view2~.top == view1~.bottom + padding + 25,
             view2~.right == view1~,
             view2~.bottom.left == self.view~ + insets,
             
             view3~.top == view1~,
             view3~.left == view1~.right + padding,
             view3~.right == insets,
-            view3~.width == 100,
-            view3~.height == view1~ * 2,
+            view3~.size == view1~ / 2,
             
-            view4~.bottom.right == self.view~ + insets,
-            view4~.size == CGSize(width: 50, height: 100)
+            view4~.centerX == view3~,
+            view4~.top == view3~.bottom + padding,
+            view4~.bottom == view1~,
+            view4~.size == CGSize(width: 50, height: 100) ~~ UILayoutPriorityDefaultHigh,
+            view4~.width == 500 ~~ UILayoutPriorityDefaultLow
         )
     }
 }
