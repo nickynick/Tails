@@ -6,7 +6,7 @@ Tails is written in Swift and currently supports iOS only. OSX support is coming
 
 ## Usage
 
-Meet the *tail operator* (™): `~`. To use your views in fully fledged layout equations, all you need to do is grow them little tails:
+Meet the *tail operator* (™): `~`. It lets you use your views in fully fledged layout equations. All you need to do is grow them little tails:
 
 ```
 Tails.install(
