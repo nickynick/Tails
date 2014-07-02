@@ -68,7 +68,7 @@ let insets = UIEdgeInsets(top: 10, left: 20, bottom: 40, right: 20)
 
 Tails.install(
     view~.top.left.right == superview~ + insets,
-    view~.bottom == footerView~ + insets
+    view~.bottom == footerView~.top + insets
 )
 ```
 
@@ -79,7 +79,7 @@ Tails.install(
     view~.top == superview~ + 10
     view~.left == superview~ + 20
     view~.right == superview~ - 20
-    view~.bottom == footerView~ - 40
+    view~.bottom == footerView~.top - 40
 )
 ```
 
