@@ -30,18 +30,41 @@ class LayoutEquation {
         self.lhs.view.setTranslatesAutoresizingMaskIntoConstraints(false)
         
         var constraints = NSLayoutConstraint[]()
+        let attributePairs = self.pairAttributes()
         
-        for lhsAttribute in self.lhs.attributes! {
-            if let rhsAttributes = self.rhs.getViewAttributes()?.attributes {
-                for rhsAttribute in rhsAttributes {
-                    constraints.append(self.createConstraintWithAttributes(lhsAttribute, rhsAttribute: rhsAttribute))
-                }
-            } else {
-                constraints.append(self.createConstraintWithAttributes(lhsAttribute, rhsAttribute: lhsAttribute))
-            }
+        for attributePair in attributePairs {
+            constraints.append(self.createConstraintWithAttributes(attributePair.0, rhsAttribute: attributePair.1))
         }
         
         return constraints
+    }
+    
+    func pairAttributes() -> (NSLayoutAttribute, NSLayoutAttribute)[] {
+        let lhsAttributes = self.lhs.attributes!
+        
+        if let rhsAttributes = self.rhs.getViewAttributes()?.attributes {
+            if areAttributesEqual(lhsAttributes, otherAttributes: rhsAttributes) {
+                return lhsAttributes.map { return ($0, $0) }
+            } else if lhsAttributes.count == 1 {
+                return rhsAttributes.map { return (lhsAttributes[0], $0) }
+            } else if rhsAttributes.count == 1 {
+                return lhsAttributes.map { return ($0, rhsAttributes[0]) }
+            } else {
+                assert(false, "Equations with different composite attributes are not supported!")
+                return []
+            }
+        } else {
+            return lhsAttributes.map { return ($0, $0) }
+        }
+    }
+    
+    func areAttributesEqual(attributes: NSLayoutAttribute[], otherAttributes: NSLayoutAttribute[]) -> Bool {
+        for attribute in attributes {
+            if !contains(otherAttributes, attribute) {
+                return false
+            }
+        }
+        return true
     }
     
     func createConstraintWithAttributes(lhsAttribute: NSLayoutAttribute, rhsAttribute: NSLayoutAttribute) -> NSLayoutConstraint {
@@ -59,8 +82,8 @@ class LayoutEquation {
             relatedBy: self.relation,
             toItem: rhsView,
             attribute: rhsViewAttribute,
-            multiplier: self.rhs.getMultiplier(rhsAttribute),
-            constant: self.rhs.getConstant(rhsAttribute))
+            multiplier: self.rhs.getMultiplier(lhsAttribute),
+            constant: self.rhs.getConstant(lhsAttribute))
         
         constraint.priority = UILayoutPriority(self.priority)
         
