@@ -11,7 +11,7 @@ Meet the *tail operator* (™): `~`. To use your views in fully fledged layout e
 ```
 Tails.install(
     view1~.top == self.topLayoutGuide~.bottom,
-    view1~.left == view.superview~,
+    view1~.left == view1.superview~,
     view1~.width == 50,
 
     view2~.top == view1~,
@@ -98,7 +98,7 @@ Tails.install(
 For alignment attributes, you may omit the right side view to refer to the left superview:
 
 ```
-let insets: UIEdgeInsets(...)
+let insets = UIEdgeInsets(...)
 
 Tails.install(
     view~.edges == insets
