@@ -2,7 +2,7 @@
 
 Tails is a take on declarative Auto Layout. If you don't like typing (like me), it might be your kind of thing!
 
-Tails currently supports iOS only, OSX support is coming soon.
+Tails is written in Swift and currently supports iOS only. OSX support is coming soon.
 
 ## Usage
 
