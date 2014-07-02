@@ -95,7 +95,7 @@ Tails.install(
 
 ## Tips and tricks
 
-For alignment attributes, you may omit the right side view to refer to the superview:
+For alignment attributes, you may omit the right side view to refer to the left superview:
 
 ```
 let insets: UIEdgeInsets(...)
