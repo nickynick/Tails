@@ -79,7 +79,7 @@ Tails.install(
     view~.top == superview~ + 10
     view~.left == superview~ + 20
     view~.right == superview~ - 20
-    view~.bottom == footer~ - 40
+    view~.bottom == footerView~ - 40
 )
 ```
 
