@@ -10,12 +10,20 @@ import Foundation
 import UIKit
 
 protocol LayoutConstant {
-    func + (lhs: Self, rhs: Self) -> Self
     func valueForLayoutAttribute(layoutAttribute: NSLayoutAttribute) -> CGFloat
+    
+    @prefix func - (v: Self) -> Self
+    func + (lhs: Self, rhs: Self) -> Self
 }
+
+func - <T: LayoutConstant>(lhs: T, rhs: T) -> T {
+    return lhs + -rhs
+}
+
 
 extension CGFloat : LayoutConstant {
 }
+
 
 extension Int : LayoutConstant {
     func valueForLayoutAttribute(attribute: NSLayoutAttribute) -> CGFloat {
@@ -23,17 +31,20 @@ extension Int : LayoutConstant {
     }
 }
 
+
 extension Float : LayoutConstant {
     func valueForLayoutAttribute(attribute: NSLayoutAttribute) -> CGFloat {
         return CGFloat(self)
     }
 }
 
+
 extension Double : LayoutConstant {
     func valueForLayoutAttribute(attribute: NSLayoutAttribute) -> CGFloat {
         return CGFloat(self)
     }
 }
+
 
 extension CGPoint : LayoutConstant {
     func valueForLayoutAttribute(attribute: NSLayoutAttribute) -> CGFloat {
@@ -48,6 +59,15 @@ extension CGPoint : LayoutConstant {
     }
 }
 
+@prefix func - (v: CGPoint) -> CGPoint {
+    return CGPoint(x: -v.x, y: -v.y)
+}
+
+func + (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
+    return CGPoint(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
+}
+
+
 extension CGSize : LayoutConstant {
     func valueForLayoutAttribute(attribute: NSLayoutAttribute) -> CGFloat {
         switch attribute {
@@ -60,6 +80,15 @@ extension CGSize : LayoutConstant {
         }
     }
 }
+
+@prefix func - (v: CGSize) -> CGSize {
+    return CGSize(width: -v.width, height: -v.height)
+}
+
+func + (lhs: CGSize, rhs: CGSize) -> CGSize {
+    return CGSize(width: lhs.width + rhs.width, height: lhs.height + rhs.height)
+}
+
 
 extension UIEdgeInsets : LayoutConstant {
     func valueForLayoutAttribute(attribute: NSLayoutAttribute) -> CGFloat {
@@ -78,12 +107,12 @@ extension UIEdgeInsets : LayoutConstant {
     }
 }
 
-func + (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
-    return CGPoint(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
-}
-
-func + (lhs: CGSize, rhs: CGSize) -> CGSize {
-    return CGSize(width: lhs.width + rhs.width, height: lhs.height + rhs.height)
+@prefix func - (v: UIEdgeInsets) -> UIEdgeInsets {
+    return UIEdgeInsets(
+        top: -v.top,
+        left: -v.left,
+        bottom: -v.bottom,
+        right: -v.right)
 }
 
 func + (lhs: UIEdgeInsets, rhs: UIEdgeInsets) -> UIEdgeInsets {

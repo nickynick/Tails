@@ -11,10 +11,10 @@ import Foundation
 operator postfix ~ {}
 
 @postfix func ~ (view: UIView) -> ViewAttributes {
-    return ViewAttributes(view: view, layoutAttributes: nil)
+    return ViewAttributes(view: view, attributes: nil)
 }
 
 @postfix func ~ (layoutGuide: UILayoutSupport) -> ViewAttributes {
     let view = layoutGuide as AnyObject as UIView
-    return ViewAttributes(view: view, layoutAttributes: nil)
+    return ViewAttributes(view: view, attributes: nil)
 }

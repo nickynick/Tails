@@ -9,20 +9,25 @@
 import Foundation
 import UIKit
 
-struct ViewAttributes {
+class ViewAttributes {
     let view: UIView
-    let layoutAttributes: NSLayoutAttribute[]?
+    let attributes: NSLayoutAttribute[]?
     
-    func add(layoutAttribute: NSLayoutAttribute) -> ViewAttributes {
-        if var layoutAttributes = self.layoutAttributes {
-            if contains(layoutAttributes, layoutAttribute) {
+    init(view: UIView, attributes: NSLayoutAttribute[]?) {
+        self.view = view
+        self.attributes = attributes
+    }
+
+    func add(attribute: NSLayoutAttribute) -> ViewAttributes {
+        if var attributes = self.attributes {
+            if contains(attributes, attribute) {
                 return self
             } else {
-                layoutAttributes.append(layoutAttribute)
-                return ViewAttributes(view: self.view, layoutAttributes: layoutAttributes)
+                attributes.append(attribute)
+                return ViewAttributes(view: self.view, attributes: attributes)
             }
         } else {
-            return ViewAttributes(view: self.view, layoutAttributes: [layoutAttribute])
+            return ViewAttributes(view: self.view, attributes: [attribute])
         }
     }
     
@@ -42,4 +47,28 @@ struct ViewAttributes {
     var center: ViewAttributes { return self.centerX.centerY }
     var size: ViewAttributes { return self.width.height }
     var edges: ViewAttributes { return self.top.left.bottom.right }
+}
+
+extension ViewAttributes: LayoutEquationRightSide {
+    func getViewAttributes() -> ViewAttributes? {
+        return self
+    }
+    
+    func getMultiplier(layoutAttribute: NSLayoutAttribute) -> CGFloat {
+        return 1
+    }
+    
+    func getConstant(layoutAttribute: NSLayoutAttribute) -> CGFloat {
+        return 0
+    }
+}
+
+extension ViewAttributes: LayoutExpressionAttributes {
+    func add<T: LayoutConstant>(constant: T) -> LayoutExpression<T> {
+        return LayoutExpression(viewAttributes: self, multiplier: 1, constant: constant)
+    }
+    
+    func multiply(multiplier: CGFloat) -> LayoutExpressionAttributes {
+        return MultipliedViewAttributes(viewAttributes: self, multiplier: multiplier)
+    }
 }

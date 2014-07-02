@@ -31,6 +31,12 @@ class TestViewController: UIViewController {
         view3.layer.borderWidth = 2
         self.view.addSubview(view3)
         
+        let view4 = UIView()
+        view4.backgroundColor = UIColor.yellowColor()
+        view4.layer.borderColor = UIColor.blackColor().CGColor
+        view4.layer.borderWidth = 2
+        self.view.addSubview(view4)
+        
         let padding: CGFloat = 10;
         let insets = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
         
@@ -46,8 +52,11 @@ class TestViewController: UIViewController {
             view3~.top == view1~,
             view3~.left == view1~.right + padding,
             view3~.right == insets,
-            view3~.width == 75,
-            view3~.height == view1~ * 2
+            view3~.width == 100,
+            view3~.height == view1~ * 2,
+            
+            view4~.bottom.right == self.view~ + insets,
+            view4~.size == CGSize(width: 50, height: 100)
         )
     }
 }
